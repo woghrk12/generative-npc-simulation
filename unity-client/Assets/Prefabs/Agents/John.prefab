@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7959011871526628945}
   - component: {fileID: 1901420886136094491}
   - component: {fileID: 587084202989915659}
+  - component: {fileID: 6154574541129920268}
   m_Layer: 0
   m_Name: John
   m_TagString: Untagged
@@ -107,12 +108,22 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3568221317925027218}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2e3fa558e512b594a97b86ce2744f52c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  agentMover: {fileID: 1901420886136094491}
-  locationRegistry: {fileID: 0}
-  targetLocationId: town.cafe
+  agentActionExecutor: {fileID: 6154574541129920268}
   startDelaySeconds: 1
+--- !u!114 &6154574541129920268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3568221317925027218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b2e6f9f8abf6e740914996c24ea1102, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
