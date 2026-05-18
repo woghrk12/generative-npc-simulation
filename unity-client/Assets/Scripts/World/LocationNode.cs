@@ -15,7 +15,7 @@ namespace GenerativeNpc.World
 
         public string LocationId => locationId;
         public string DisplayName => displayName;
-
+        public Vector3 Position => transform.position;
         #endregion
     }
 }
