@@ -1,3 +1,4 @@
+using GenerativeNpc.Simulation;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,6 +13,13 @@ namespace GenerativeNpc.World.Agent
         [SerializeField] private string agentId;
         [SerializeField] private string agentName;
 
+        [Header("Initial State")]
+        [SerializeField] private string initialLocationId = "town.house";
+
+        [Header("State")]
+        [SerializeField] private AgentRuntimeState runtimeState = new();
+
+        private SimulationClock simulationClock;
         private AgentActionExecutor actionExecutor;
 
         private readonly Queue<AgentActionDto> actionQueue = new();
@@ -30,6 +38,7 @@ namespace GenerativeNpc.World.Agent
 
         private void Awake()
         {
+            simulationClock = FindObjectOfType<SimulationClock>();
             actionExecutor = GetComponent<AgentActionExecutor>();
 
             // Example actions for debugging
@@ -81,6 +90,9 @@ namespace GenerativeNpc.World.Agent
 
         private void Start()
         {
+            runtimeState ??= new AgentRuntimeState();
+            runtimeState.Initialize(initialLocationId, simulationClock.CurrentTimeText);
+
             StartAction();   
         }
 
@@ -119,20 +131,44 @@ namespace GenerativeNpc.World.Agent
                 yield break;
             }
 
-            Debug.Log($"Agent loop started. AgentId: {AgentId}, Name: {AgentName}");
+            Debug.Log(
+                $"Agent loop started.\n" +
+                $"AgentId: {AgentId}\n" +
+                $"Name: {AgentName}\n" +
+                $"Initial Location: {runtimeState.currentLocationId}\n" +
+                $"Time: {simulationClock.CurrentTimeText}"
+            );
 
             while (isRunning)
             {
                 if (actionQueue.Count == 0)
                 {
+                    runtimeState.SetWaitingForAction("No action is currently queued.", simulationClock.CurrentTimeText);
+
                     EnqueueAction(CreateFallbackWaitAction());
                 }
 
                 AgentActionDto nextAction = actionQueue.Dequeue();
 
-                Debug.Log($"[{AgentName}] Next action: {nextAction.actionType}\nTarget: {nextAction.targetId}\nReason: {nextAction.reason}");
+                Debug.Log(
+                    $"[{AgentName}] Next action: {nextAction.actionType}\n" +
+                    $"Target: {nextAction.targetId}\n" +
+                    $"Reason: {nextAction.reason}"
+                );
+
+                runtimeState.StartAction(nextAction, simulationClock.CurrentTimeText);
 
                 yield return actionExecutor.Execute(nextAction);
+
+                runtimeState.CompleteAction(nextAction, simulationClock.CurrentTimeText);
+
+                Debug.Log(
+                    $"[{AgentName}] State updated.\n" +
+                    $"Location: {runtimeState.currentLocationId}\n" +
+                    $"Status: {runtimeState.status}\n" +
+                    $"Last Action: {runtimeState.lastActionType}\n" +
+                    $"Time: {runtimeState.lastUpdatedTimeText}"
+                );
             }
         }
 
