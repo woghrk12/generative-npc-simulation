@@ -621,6 +621,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1649858548}
   - component: {fileID: 1649858549}
+  - component: {fileID: 1649858551}
+  - component: {fileID: 1649858550}
   m_Layer: 0
   m_Name: System
   m_TagString: Untagged
@@ -655,6 +657,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a8a634726835a3429911210d6a42853, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1649858550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1649858547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a99cd91ebcbda7488b54019efc3cde2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clock: {fileID: 1649858551}
+  logIntervalMinutes: 10
+--- !u!114 &1649858551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1649858547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b173ed20b9377a347a636a4033ad7092, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startDay: 1
+  startHour: 8
+  startMinute: 0
+  secondsPerGameMinute: 0.1
 --- !u!4 &1989119675 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 490668797629608366, guid: ef85395dd2de60241b347a434232c967, type: 3}

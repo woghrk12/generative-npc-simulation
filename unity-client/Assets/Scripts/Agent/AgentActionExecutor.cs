@@ -1,3 +1,4 @@
+using GenerativeNpc.Simulation;
 using System.Collections;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ namespace GenerativeNpc.World.Agent
         #region Variables
 
         private LocationRegistry locationRegistry = null;
+        private SimulationClock simulationClock = null;
 
         private AgentMover agentMover = null;
 
@@ -24,6 +26,7 @@ namespace GenerativeNpc.World.Agent
         private void Awake()
         {
             locationRegistry = FindObjectOfType<LocationRegistry>();
+            simulationClock = FindObjectOfType<SimulationClock>();
 
             agentMover = GetComponent<AgentMover>();    
         }
@@ -109,7 +112,19 @@ namespace GenerativeNpc.World.Agent
 
         private IEnumerator ExecuteWait(AgentActionDto action) 
         {
-            Debug.Log($"Waiting for {action.durationMinutes} minutes.");
+            if (simulationClock == null) 
+            {
+                Debug.LogError("SimulationClock is not assigned.");
+                yield break;
+            }
+
+            var waitSeconds = simulationClock.ConvertGameMinutesToSeconds(action.durationMinutes);
+
+            Debug.Log(
+                $"Waiting for {action.durationMinutes} minutes." +
+                $"({waitSeconds:0.00} real seconds)." +
+                $"Current time: {simulationClock.CurrentTimeText}"
+            );
 
             yield return new WaitForSeconds(action.durationMinutes);
         }
@@ -124,7 +139,7 @@ namespace GenerativeNpc.World.Agent
 
             Debug.Log($"Dialogue: {action.dialogue}");
 
-            yield return new WaitForSeconds(action.durationMinutes);
+            yield return new WaitForSeconds(1f);
         }
 
         private IEnumerator ExecuteUseObject(AgentActionDto action) 
@@ -137,7 +152,7 @@ namespace GenerativeNpc.World.Agent
 
             Debug.Log($"Use object: {action.targetId}");
 
-            yield return new WaitForSeconds(action.durationMinutes);
+            yield return new WaitForSeconds(1f);
         }
 
         #endregion
