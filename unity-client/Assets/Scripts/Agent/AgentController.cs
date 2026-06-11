@@ -32,6 +32,8 @@ namespace GenerativeNpc.World.Agent
         public string AgentId => agentId;
         public string AgentName => agentName;
 
+        public AgentRuntimeState RuntimeState => runtimeState;
+
         #endregion Properties
 
         #region Unity Events

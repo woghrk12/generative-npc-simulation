@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1901420886136094491}
   - component: {fileID: 6154574541129920268}
   - component: {fileID: 5585784812571532163}
+  - component: {fileID: 3318758528996226170}
   m_Layer: 0
   m_Name: John
   m_TagString: Untagged
@@ -127,3 +128,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agentId: 
   agentName: 
+  initialLocationId: town.house
+  runtimeState:
+    currentLocationId: 
+    status: Idle
+    currentActionType: 
+    currentTargetId: 
+    currentActionReason: 
+    lastActionType: 
+    lastTargetId: 
+    lastActionReason: 
+    lastUpdatedTimeText: 
+--- !u!114 &3318758528996226170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3568221317925027218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb17f60836206dd40a71733148dcf73c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
