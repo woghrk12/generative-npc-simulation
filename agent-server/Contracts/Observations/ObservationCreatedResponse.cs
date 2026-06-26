@@ -6,5 +6,9 @@ public sealed record ObservationCreatedResponse(
     string AgentId,
     int ObservationCount,
     Guid ObservationId,
-    DateTimeOffset ReceivedAtUtc
+    DateTimeOffset ReceivedAtUtc,
+    bool MemoryCreated,
+    Guid? MemoryId,
+    int MemoryCount,
+    string MemoryMessage
 );

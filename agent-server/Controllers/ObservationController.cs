@@ -1,4 +1,5 @@
 using AgentServer.Contracts.Observations;
+using AgentServer.Services.Memories;
 using AgentServer.Services.Observations;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,10 +10,12 @@ namespace AgentServer.Controllers;
 public sealed class ObservationController : ControllerBase
 {
     private readonly IObservationService observationService;
+    private readonly IMemoryStreamService memoryStreamService;
 
-    public ObservationController(IObservationService observationService)
+    public ObservationController(IObservationService observationService, IMemoryStreamService memoryStreamService)
     {
         this.observationService = observationService;
+        this.memoryStreamService = memoryStreamService;
     }
 
     [HttpPost]
@@ -33,7 +36,8 @@ public sealed class ObservationController : ControllerBase
             return Problem(statusCode: StatusCodes.Status409Conflict, title: "Agent ID mismatch", detail: $"Route agentId `{agentId}` does not match body agentId `{request.AgentId}`.");
         }
 
-        var result = observationService.Add(request);
+        var observationResult = observationService.Add(request);
+        var memoryResult = memoryStreamService.RecordObservation(request);
 
         Console.WriteLine(
             $"[Observation Received] " +
@@ -41,16 +45,26 @@ public sealed class ObservationController : ControllerBase
             $"gameTime={request.GameTime}, " +
             $"location={request.CurrentLocationId}, " +
             $"visibleObjects={request.VisibleObjects.Count}, " +
-            $"count={result.ObservationCount}"
+            $"count={observationResult.ObservationCount}"
+        );
+
+        Console.WriteLine(
+            memoryResult.Created
+            ? $"[Memory Created] agent={request.AgentId}, memoryId={memoryResult.Memory!.Id}, memoryCount={memoryResult.MemoryCount}"
+            : $"[Memory Skipped] agent={request.AgentId}, reason={memoryResult.Reason}, memoryCount={memoryResult.MemoryCount}"
         );
 
         var response = new ObservationCreatedResponse(
             Ok: true,
             Message: "Observation received",
             AgentId: request.AgentId,
-            ObservationCount: result.ObservationCount,
-            ObservationId: result.StoredObservation.Id,
-            ReceivedAtUtc: result.StoredObservation.ReceivedAtUtc
+            ObservationCount: observationResult.ObservationCount,
+            ObservationId: observationResult.StoredObservation.Id,
+            ReceivedAtUtc: observationResult.StoredObservation.ReceivedAtUtc,
+            MemoryCreated: memoryResult.Created,
+            MemoryId: memoryResult.Memory?.Id,
+            MemoryCount: memoryResult.MemoryCount,
+            MemoryMessage: memoryResult.Reason
         );
 
         return StatusCode(StatusCodes.Status201Created, response);
@@ -92,6 +106,11 @@ public sealed class ObservationController : ControllerBase
         if (string.IsNullOrWhiteSpace(request.Status))
         {
             return "status is required.";
+        }
+
+        if (request.VisibleObjects is null)
+        {
+            return "visibleObjects is required.";
         }
 
         for (int index = 0; index < request.VisibleObjects.Count; index++)

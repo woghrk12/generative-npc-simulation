@@ -11,5 +11,10 @@ namespace GenerativeNpc.AI
         public int observationCount;
         public string observationId;
         public string receivedAtUtc;
+
+        public bool memoryCreated;
+        public string memoryId;
+        public int memoryCount;
+        public string memoryMessage;
     }
 }

@@ -22,68 +22,48 @@ namespace GenerativeNpc.Agent
 
         private IEnumerator Start()
         {
-            yield return new WaitForSeconds(
-                startDelaySeconds
-            );
+            yield return new WaitForSeconds(startDelaySeconds);
 
             while (true)
             {
                 if (observationBuilder == null)
                 {
-                    Debug.LogError(
-                        "AgentObservationBuilder " +
-                        "is not assigned."
-                    );
-
+                    Debug.LogError("AgentObservationBuilder is not assigned.");
                     yield break;
                 }
 
                 if (agentApiClient == null)
                 {
-                    Debug.LogError(
-                        "AgentApiClient is not assigned."
-                    );
-
+                    Debug.LogError("AgentApiClient is not assigned.");
                     yield break;
                 }
 
-                var observation =
-                    observationBuilder.BuildObservation();
+                var observation = observationBuilder.BuildObservation();
 
                 if (observation == null)
                 {
-                    Debug.LogWarning(
-                        "Observation could not be created."
-                    );
+                    Debug.LogWarning("Observation could not be created.");
                 }
                 else
                 {
-                    yield return
-                        agentApiClient.SendObservation(
-                            observation,
-                            HandleSuccess,
-                            HandleError
-                        );
+                    yield return agentApiClient.SendObservation(observation, HandleSuccess, HandleError);
                 }
 
-                yield return new WaitForSeconds(
-                    sendIntervalSeconds
-                );
+                yield return new WaitForSeconds(sendIntervalSeconds);
             }
         }
 
-        private void HandleSuccess(
-            ObservationResponseDto response
-        )
+        private void HandleSuccess(ObservationResponseDto response)
         {
+            var memoryResult = response.memoryCreated ? $"Memory created: {response.memoryId}" : $"Memory skipped: {response.memoryMessage}";
+
             Debug.Log(
                 $"Observation sent successfully. " +
                 $"Agent: {response.agentId}, " +
-                $"Count: {response.observationCount}, " +
-                $"ObservationId: " +
-                $"{response.observationId}, " +
-                $"ReceivedAtUtc: " +
-                $"{response.receivedAtUtc}"
+                $"Observation Count: " +
+                $"{response.observationCount}, " +
+                $"Memory Count: {response.memoryCount}, " +
+                $"{memoryResult}"
             );
         }
 
