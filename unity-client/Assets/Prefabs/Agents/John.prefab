@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 6154574541129920268}
   - component: {fileID: 5585784812571532163}
   - component: {fileID: 3318758528996226170}
+  - component: {fileID: 9114732043587387371}
+  - component: {fileID: 298341786772353770}
   m_Layer: 0
   m_Name: John
   m_TagString: Untagged
@@ -126,8 +128,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79945313e9a9269439675972feafb22c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  agentId: 
-  agentName: 
+  agentId: john
+  agentName: John
   initialLocationId: town.house
   runtimeState:
     currentLocationId: 
@@ -151,3 +153,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb17f60836206dd40a71733148dcf73c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &9114732043587387371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3568221317925027218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74cc4b7e53b57924ab05e8d4aa14f136, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  simulationClock: {fileID: 0}
+--- !u!114 &298341786772353770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3568221317925027218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: deb1768c212992642901207a7973edf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  observationBuilder: {fileID: 9114732043587387371}
+  agentApiClient: {fileID: 0}
+  startDelaySeconds: 1
+  sendIntervalSeconds: 3

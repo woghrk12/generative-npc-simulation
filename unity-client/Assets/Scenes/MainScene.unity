@@ -1136,6 +1136,7 @@ GameObject:
   - component: {fileID: 1649858552}
   - component: {fileID: 1649858551}
   - component: {fileID: 1649858550}
+  - component: {fileID: 1649858553}
   m_Layer: 0
   m_Name: System
   m_TagString: Untagged
@@ -1212,6 +1213,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0732fd170dc29224bb9e889365867b92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1649858553
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1649858547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15ef69816c8683b41a5f0780815d189e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseUrl: http://127.0.0.1:4000
+  timeoutSeconds: 10
 --- !u!1 &1943849310
 GameObject:
   m_ObjectHideFlags: 0
@@ -1361,6 +1376,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 739928494}
     m_Modifications:
+    - target: {fileID: 298341786772353770, guid: ef85395dd2de60241b347a434232c967, type: 3}
+      propertyPath: agentApiClient
+      value: 
+      objectReference: {fileID: 1649858553}
     - target: {fileID: 490668797629608366, guid: ef85395dd2de60241b347a434232c967, type: 3}
       propertyPath: m_LocalPosition.x
       value: 4
@@ -1405,32 +1424,23 @@ PrefabInstance:
       propertyPath: m_Name
       value: John
       objectReference: {fileID: 0}
+    - target: {fileID: 5585784812571532163, guid: ef85395dd2de60241b347a434232c967, type: 3}
+      propertyPath: agentId
+      value: john
+      objectReference: {fileID: 0}
+    - target: {fileID: 5585784812571532163, guid: ef85395dd2de60241b347a434232c967, type: 3}
+      propertyPath: agentName
+      value: John
+      objectReference: {fileID: 0}
+    - target: {fileID: 9114732043587387371, guid: ef85395dd2de60241b347a434232c967, type: 3}
+      propertyPath: simulationClock
+      value: 
+      objectReference: {fileID: 1649858551}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3568221317925027218, guid: ef85395dd2de60241b347a434232c967, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3220521657947867519}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ef85395dd2de60241b347a434232c967, type: 3}
---- !u!1 &3220521657947867518 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3568221317925027218, guid: ef85395dd2de60241b347a434232c967, type: 3}
-  m_PrefabInstance: {fileID: 3220521657947867517}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &3220521657947867519
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3220521657947867518}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74cc4b7e53b57924ab05e8d4aa14f136, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  simulationClock: {fileID: 1649858551}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
