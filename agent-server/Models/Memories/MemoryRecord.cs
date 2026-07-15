@@ -6,6 +6,8 @@ public sealed record MemoryRecord(
     MemoryType Type,
     string Content,
     string GameTime,
+    int Importance,
+    string ImportanceReason,
     DateTimeOffset CreatedAtUtc,
     DateTimeOffset LastAccessAtUtc
 );

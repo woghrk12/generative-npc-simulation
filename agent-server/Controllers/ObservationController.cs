@@ -50,7 +50,7 @@ public sealed class ObservationController : ControllerBase
 
         Console.WriteLine(
             memoryResult.Created
-            ? $"[Memory Created] agent={request.AgentId}, memoryId={memoryResult.Memory!.Id}, memoryCount={memoryResult.MemoryCount}"
+            ? $"[Memory Created] agent={request.AgentId}, memoryId={memoryResult.Memory!.Id}, importance={memoryResult.Memory.Importance}, memoryCount={memoryResult.MemoryCount}"
             : $"[Memory Skipped] agent={request.AgentId}, reason={memoryResult.Reason}, memoryCount={memoryResult.MemoryCount}"
         );
 
@@ -64,7 +64,9 @@ public sealed class ObservationController : ControllerBase
             MemoryCreated: memoryResult.Created,
             MemoryId: memoryResult.Memory?.Id,
             MemoryCount: memoryResult.MemoryCount,
-            MemoryMessage: memoryResult.Reason
+            MemoryMessage: memoryResult.Reason,
+            MemoryImportance: memoryResult.Memory?.Importance ?? 0,
+            MemoryImportanceReaons: memoryResult.Memory?.ImportanceReason ?? string.Empty
         );
 
         return StatusCode(StatusCodes.Status201Created, response);

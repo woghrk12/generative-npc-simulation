@@ -16,5 +16,8 @@ namespace GenerativeNpc.AI
         public string memoryId;
         public int memoryCount;
         public string memoryMessage;
+
+        public int memoryImportance;
+        public string memoryImportanceReason;
     }
 }

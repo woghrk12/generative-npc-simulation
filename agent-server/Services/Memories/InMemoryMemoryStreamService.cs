@@ -11,9 +11,16 @@ public sealed class InMemoryMemoryStreamService : IMemoryStreamService
 
     private const int MAX_MEMORIES_PER_AGENT = 1_000;
 
+    private readonly IImportanceScorer importanceScorer;
+
     private readonly ConcurrentDictionary<string, AgentMemoryState> statesByAgent = new(StringComparer.Ordinal);
 
     #endregion
+
+    public InMemoryMemoryStreamService(IImportanceScorer importanceScorer)
+    {
+        this.importanceScorer = importanceScorer;
+    }
 
     public ObservationMemoryResult RecordObservation(AgentObservationRequest observation)
     {
@@ -30,7 +37,20 @@ public sealed class InMemoryMemoryStreamService : IMemoryStreamService
             }
 
             var now = DateTimeOffset.UtcNow;
-            var memory = new MemoryRecord(Id: Guid.NewGuid(), AgentId: observation.AgentId, Type: MemoryType.Observation, Content: BuildObservationContent(observation), GameTime: observation.GameTime, CreatedAtUtc: now, LastAccessAtUtc: now);
+            var content = BuildObservationContent(observation);
+            var importance = importanceScorer.Score(observation, content);
+
+            var memory = new MemoryRecord(
+                Id: Guid.NewGuid(),
+                AgentId: observation.AgentId,
+                Type: MemoryType.Observation,
+                Content: content,
+                GameTime: observation.GameTime,
+                Importance: importance.Score,
+                ImportanceReason: importance.Reason,
+                CreatedAtUtc: now,
+                LastAccessAtUtc: now
+            );
 
             state.Memories.Add(memory);
 

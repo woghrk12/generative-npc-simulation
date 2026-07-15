@@ -55,7 +55,9 @@ namespace GenerativeNpc.Agent
 
         private void HandleSuccess(ObservationResponseDto response)
         {
-            var memoryResult = response.memoryCreated ? $"Memory created: {response.memoryId}" : $"Memory skipped: {response.memoryMessage}";
+            var memoryResult = response.memoryCreated 
+                ? $"Memory created: {response.memoryId}, Importance: {response.memoryImportance}, Reason: {response.memoryImportanceReason}" 
+                : $"Memory skipped: {response.memoryMessage}";
 
             Debug.Log(
                 $"Observation sent successfully. " +

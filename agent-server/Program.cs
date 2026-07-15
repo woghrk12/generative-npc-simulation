@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 builder.Services.AddSingleton<IObservationService, InMemoryObservationService>();
+builder.Services.AddSingleton<IImportanceScorer, RuleBasedImportanceScorer>();
 builder.Services.AddSingleton<IMemoryStreamService, InMemoryMemoryStreamService>();
 
 var app = builder.Build();

@@ -10,5 +10,7 @@ public sealed record ObservationCreatedResponse(
     bool MemoryCreated,
     Guid? MemoryId,
     int MemoryCount,
-    string MemoryMessage
+    string MemoryMessage,
+    int MemoryImportance,
+    string MemoryImportanceReaons
 );

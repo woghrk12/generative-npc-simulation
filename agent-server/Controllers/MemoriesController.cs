@@ -26,6 +26,8 @@ public sealed class MemoriesController : ControllerBase
                 Type: memory.Type.ToString().ToLowerInvariant(),
                 Content: memory.Content,
                 GameTime: memory.GameTime,
+                Importance: memory.Importance,
+                ImportanceReason: memory.ImportanceReason,
                 CreatedAtUtc: memory.CreatedAtUtc,
                 LastAccessedAtUtc: memory.LastAccessAtUtc
             )
