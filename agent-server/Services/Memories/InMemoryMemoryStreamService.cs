@@ -80,6 +80,39 @@ public sealed class InMemoryMemoryStreamService : IMemoryStreamService
         }
     }
 
+    public void UpdateLastAccessed(string agentId, IReadOnlyCollection<Guid> memoryIds, DateTimeOffset accessedAtUtc)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(agentId);
+        ArgumentNullException.ThrowIfNull(memoryIds);
+
+        if (memoryIds.Count == 0)
+        {
+            return;
+        }
+
+        if (statesByAgent.TryGetValue(agentId, out var state) == false)
+        {
+            return;
+        }
+
+        var idSet = memoryIds.ToHashSet();
+
+        lock (state.SyncRoot)
+        {
+            for (var index = 0; index < state.Memories.Count; index++)
+            {
+                var memory = state.Memories[index];
+
+                if (idSet.Contains(memory.Id))
+                {
+                    continue;
+                }
+
+                state.Memories[index] = memory with { LastAccessAtUtc = accessedAtUtc };
+            }
+        }
+    }
+
     private static string BuildObservationSignature(AgentObservationRequest observation)
     {
         var builder = new StringBuilder();

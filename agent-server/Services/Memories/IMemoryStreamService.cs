@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using AgentServer.Contracts.Observations;
 using AgentServer.Models.Memories;
 
@@ -9,4 +8,6 @@ public interface IMemoryStreamService
     ObservationMemoryResult RecordObservation(AgentObservationRequest observation);
 
     IReadOnlyList<MemoryRecord> GetByAgentId(string agentId);
+
+    void UpdateLastAccessed(string agentId, IReadOnlyCollection<Guid> memoryIds, DateTimeOffset accessedAtUtc);
 }
