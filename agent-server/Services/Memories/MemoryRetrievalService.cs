@@ -9,9 +9,7 @@ public sealed class MemoryRetrievalService : IMemoryRetrievalService
 
     private const double RECENCY_DECAY_FACTOR = 0.995;
 
-    private const double RELEVANCE_WEIGHT = 0.45;
-    private const double IMPORTANCE_WEIGHT = 0.35;
-    private const double RECENCY_WEIGHT = 0.20;
+    private const double MIN_MAX_EPSILON = 0.000000001;
 
     private const int MIN_TOP_K = 1;
     private const int MAX_TOP_K = 20;
@@ -41,8 +39,11 @@ public sealed class MemoryRetrievalService : IMemoryRetrievalService
         var now = DateTimeOffset.UtcNow;
         var queryTokens = Tokenize(query);
 
-        var scoredItems = memoryStream
-            .Select(item => ScoreMemory(item, queryTokens, now))
+        var rawItems = memoryStream
+            .Select(memory => ScoreMemoryRaw(memory, queryTokens, now))
+            .ToArray();
+
+        var scoredItems = ApplyMinMaxScaling(rawItems)
             .OrderByDescending(item => item.FinalScore)
             .ThenByDescending(item => item.Memory.CreatedAtUtc)
             .Take(normalizedTopK)
@@ -55,15 +56,13 @@ public sealed class MemoryRetrievalService : IMemoryRetrievalService
         return scoredItems.Select(item => item with { Memory = item.Memory with { LastAccessAtUtc = now } }).ToArray();
     }
 
-    private static MemoryRetrievalItem ScoreMemory(MemoryRecord memory, IReadOnlySet<string> queryTokens, DateTimeOffset now)
+    private static RawMemoryRetrievalItem ScoreMemoryRaw(MemoryRecord memory, IReadOnlySet<string> queryTokens, DateTimeOffset now)
     {
-        var recencyScore = CalculateRecencyScore(memory, now);
-        var importanceScore = CalculateImportanceScore(memory);
-        var relevanceScore = CalculateRelevanceScore(memory, queryTokens);
+        var rawRecencyScore = CalculateRecencyScore(memory, now);
+        var rawImportanceScore = CalculateImportanceScore(memory);
+        var rawRelevanceScore = CalculateRelevanceScore(memory, queryTokens);
 
-        var finalScore = relevanceScore * RELEVANCE_WEIGHT + importanceScore * IMPORTANCE_WEIGHT + relevanceScore * RELEVANCE_WEIGHT;
-
-        return new MemoryRetrievalItem(Memory: memory, RecencyScore: recencyScore, ImportanceScore: importanceScore, RelevanceScore: relevanceScore, FinalScore: finalScore);
+        return new RawMemoryRetrievalItem(Memory: memory, RawRecencyScore: rawRecencyScore, RawImportanceScore: rawImportanceScore, RawRelevanceScore: rawRelevanceScore);
     }
 
     private static double CalculateRecencyScore(MemoryRecord memory, DateTimeOffset now)
@@ -73,7 +72,7 @@ public sealed class MemoryRetrievalService : IMemoryRetrievalService
         return Math.Pow(RECENCY_DECAY_FACTOR, elapsedHours);
     }
 
-    private static double CalculateImportanceScore(MemoryRecord memory) => Math.Clamp(memory.Importance / 10.0, 0.0, 1.0);
+    private static double CalculateImportanceScore(MemoryRecord memory) => memory.Importance;
 
     private static double CalculateRelevanceScore(MemoryRecord memory, IReadOnlySet<string> queryTokens)
     {
@@ -92,6 +91,33 @@ public sealed class MemoryRetrievalService : IMemoryRetrievalService
         var matchedCount = queryTokens.Count(memoryTokens.Contains);
 
         return matchedCount / (double)queryTokens.Count;
+    }
+
+    private static IReadOnlyList<MemoryRetrievalItem> ApplyMinMaxScaling(IReadOnlyList<RawMemoryRetrievalItem> rawItems)
+    {
+        if (rawItems.Count == 0)
+        {
+            return [];
+        }
+
+        var (minRecencyScore, maxRecencyScore) = GetRange(rawItems.Select(item => item.RawRecencyScore));
+        var (minImportanceScore, maxImportanceScore) = GetRange(rawItems.Select(item => item.RawImportanceScore));
+        var (minRelevanceScore, maxRelevanceScore) = GetRange(rawItems.Select(item => item.RawRelevanceScore));
+
+        return rawItems.Select(item =>
+        {
+            var recencyScore = Scale(item.RawRecencyScore, minRecencyScore, maxRecencyScore);
+            var importanceScore = Scale(item.RawImportanceScore, minImportanceScore, maxImportanceScore);
+            var relevanceScore = Scale(item.RawRelevanceScore, minRelevanceScore, maxRelevanceScore);
+
+            return new MemoryRetrievalItem(
+                Memory: item.Memory,
+                RecencyScore: recencyScore,
+                ImportanceScore: importanceScore,
+                RelevanceScore: relevanceScore,
+                FinalScore: recencyScore + importanceScore + relevanceScore
+            );
+        }).ToArray();
     }
 
     private static HashSet<string> Tokenize(string text)
@@ -158,5 +184,31 @@ public sealed class MemoryRetrievalService : IMemoryRetrievalService
             "status" or
             "visible" or
             "objects";
+    }
+
+    private static (double, double) GetRange(IEnumerable<double> values)
+    {
+        var min = double.PositiveInfinity;
+        var max = double.NegativeInfinity;
+
+        foreach (var value in values)
+        {
+            min = Math.Min(min, value);
+            max = Math.Max(max, value);
+        }
+
+        return double.IsPositiveInfinity(min) ? (0, 0) : (min, max);
+    }
+
+    private static double Scale(double value, double min, double max)
+    {
+        var range = max - min;
+
+        if (Math.Abs(range) < MIN_MAX_EPSILON)
+        {
+            return 0;
+        }
+
+        return Math.Clamp((value - min) / range, 0.0, 1.0);
     }
 }
