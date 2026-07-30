@@ -24,16 +24,9 @@ public sealed class ObservationController : ControllerBase
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
     public ActionResult<ObservationCreatedResponse> Create([FromRoute] string agentId, [FromBody] AgentObservationRequest request)
     {
-        var validationError = ValidateRequest(request);
-
-        if (validationError is not null)
-        {
-            return Problem(statusCode: StatusCodes.Status400BadRequest, title: "Invalid observation", detail: validationError);
-        }
-
         if (string.Equals(agentId, request.AgentId, StringComparison.Ordinal) == false)
         {
-            return Problem(statusCode: StatusCodes.Status409Conflict, title: "Agent ID mismatch", detail: $"Route agentId `{agentId}` does not match body agentId `{request.AgentId}`.");
+            return Problem(statusCode: StatusCodes.Status409Conflict, title: "Agent Id mismatch", detail: "route agentId and body agentId must match.");
         }
 
         var observationResult = observationService.Add(request);
@@ -69,7 +62,7 @@ public sealed class ObservationController : ControllerBase
             MemoryImportanceReaons: memoryResult.Memory?.ImportanceReason ?? string.Empty
         );
 
-        return StatusCode(StatusCodes.Status201Created, response);
+        return Created($"/agents/{request.AgentId}/observations/{response.ObservationId}", response);
     }
 
     [HttpGet]
@@ -81,65 +74,5 @@ public sealed class ObservationController : ControllerBase
         var response = new ObservationListReponse(Ok: true, AgentId: agentId, Count: responseItems.Length, Observations: responseItems);
 
         return Ok(response);
-    }
-
-    private static string? ValidateRequest(AgentObservationRequest request)
-    {
-        if (string.IsNullOrWhiteSpace(request.AgentId))
-        {
-            return "agentId is required.";
-        }
-
-        if (string.IsNullOrWhiteSpace(request.AgentName))
-        {
-            return "agentName is required.";
-        }
-
-        if (string.IsNullOrWhiteSpace(request.GameTime))
-        {
-            return "gameTime is required.";
-        }
-
-        if (string.IsNullOrWhiteSpace(request.CurrentLocationId))
-        {
-            return "currentLocationId is required.";
-        }
-
-        if (string.IsNullOrWhiteSpace(request.Status))
-        {
-            return "status is required.";
-        }
-
-        if (request.VisibleObjects is null)
-        {
-            return "visibleObjects is required.";
-        }
-
-        for (int index = 0; index < request.VisibleObjects.Count; index++)
-        {
-            var visibleObject = request.VisibleObjects[index];
-
-            if (string.IsNullOrWhiteSpace(visibleObject.ObjectId))
-            {
-                return $"visibleObjects[{index}].objectId is required.";
-            }
-
-            if (string.IsNullOrWhiteSpace(visibleObject.DisplayName))
-            {
-                return $"visibleObjects[{index}].displayName is required.";
-            }
-
-            if (string.IsNullOrWhiteSpace(visibleObject.LocationId))
-            {
-                return $"visibleObjects[{index}].locationId is required.";
-            }
-
-            if (string.IsNullOrWhiteSpace(visibleObject.State))
-            {
-                return $"visibleObjects[{index}].state is required.";
-            }
-        }
-
-        return null;
     }
 }

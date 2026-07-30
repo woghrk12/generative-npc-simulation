@@ -1,16 +1,29 @@
+using System.ComponentModel.DataAnnotations;
+using AgentServer.Validation;
+
 namespace AgentServer.Contracts.Observations;
 
 public sealed record AgentObservationRequest
 {
-    public string AgentId { get; init; } = string.Empty;
+    [Required(ErrorMessage = "agentId is required.")]
+    [NotWhiteSpace(ErrorMessage = "agentId cannot be blank.")]
+    public required string AgentId { get; init; }
 
-    public string AgentName { get; init; } = string.Empty;
+    [Required(ErrorMessage = "agentName is required.")]
+    [NotWhiteSpace(ErrorMessage = "agentName cannot be blank.")]
+    public required string AgentName { get; init; }
 
-    public string GameTime { get; init; } = string.Empty;
+    [Required(ErrorMessage = "gameTime is required.")]
+    [NotWhiteSpace(ErrorMessage = "gameTime cannot be blank.")]
+    public required string GameTime { get; init; }
 
-    public string CurrentLocationId { get; init; } = string.Empty;
+    [Required(ErrorMessage = "currentLocationId is required.")]
+    [NotWhiteSpace(ErrorMessage = "currentLocationId cannot be blank.")]
+    public required string CurrentLocationId { get; init; }
 
-    public string Status { get; init; } = string.Empty;
+    [Required(ErrorMessage = "status is required.")]
+    [NotWhiteSpace(ErrorMessage = "status cannot be blank.")]
+    public required string Status { get; init; }
 
     public string CurrentActionType { get; init; } = string.Empty;
 
@@ -24,5 +37,6 @@ public sealed record AgentObservationRequest
 
     public string LastActionReason { get; init; } = string.Empty;
 
-    public IReadOnlyList<VisibleObjectRequest> VisibleObjects { get; init; } = [];
+    [Required(ErrorMessage = "visibleObjects is required.")]
+    public required IReadOnlyList<VisibleObjectRequest> VisibleObjects { get; init; }
 }

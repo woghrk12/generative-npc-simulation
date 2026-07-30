@@ -46,18 +46,7 @@ public sealed class MemoriesController : ControllerBase
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
     public ActionResult<MemoryRetrievalResponse> Retrieve([FromRoute] string agentId, [FromBody] RetrieveMemoriesRequest request)
     {
-        if (request is null)
-        {
-            return Problem(statusCode: StatusCodes.Status400BadRequest, title: "Invalid retrieval request", detail: "Request body is required.");
-        }
-
-        if (string.IsNullOrWhiteSpace(request.Query))
-        {
-            return Problem(statusCode: StatusCodes.Status400BadRequest, title: "Invalid retrieval request", detail: "query is required.");
-        }
-
-        var topK = request.TopK <= 0 ? 5 : request.TopK;
-        var retrievedItems = memoryRetrievalService.Retrieve(agentId, request.Query, topK);
+        var retrievedItems = memoryRetrievalService.Retrieve(agentId, request.Query, request.TopK);
         var responseItems = retrievedItems.Select(ToRetrievedResponse).ToArray();
 
         var response = new MemoryRetrievalResponse(Ok: true, AgentId: agentId, Query: request.Query, Count: responseItems.Length, Memories: responseItems);
