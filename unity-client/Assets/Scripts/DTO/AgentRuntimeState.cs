@@ -69,9 +69,9 @@ namespace GenerativeNpc.World.Agent
         {
             status = "WaitingForAction";
 
-            currentActionType = "None";
-            currentTargetId = "";
-            currentActionReason = reason; 
+            currentActionType = string.Empty;
+            currentTargetId = string.Empty;
+            currentActionReason = string.Empty; 
 
             lastUpdatedTimeText = timeText; 
         }
