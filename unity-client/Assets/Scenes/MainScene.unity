@@ -395,7 +395,7 @@ MonoBehaviour:
   locationId: town.cafe
   isObservable: 1
   objectState:
-    stateText: empty
+    stateText: has coffee
 --- !u!1 &499393230
 GameObject:
   m_ObjectHideFlags: 0
@@ -1137,6 +1137,7 @@ GameObject:
   - component: {fileID: 1649858551}
   - component: {fileID: 1649858550}
   - component: {fileID: 1649858553}
+  - component: {fileID: 1649858554}
   m_Layer: 0
   m_Name: System
   m_TagString: Untagged
@@ -1227,6 +1228,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseUrl: http://127.0.0.1:4000
   timeoutSeconds: 10
+--- !u!114 &1649858554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1649858547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c174204e2facf9c4e99270d2afba0779, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1943849310
 GameObject:
   m_ObjectHideFlags: 0

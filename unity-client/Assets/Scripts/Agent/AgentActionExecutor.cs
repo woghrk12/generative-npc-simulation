@@ -10,6 +10,7 @@ namespace GenerativeNpc.World.Agent
 
         private LocationRegistry locationRegistry = null;
         private SimulationClock simulationClock = null;
+        private WorldObjectActionEffectResolver actionEffectResolver = null;
 
         private AgentMover agentMover = null;
 
@@ -27,6 +28,7 @@ namespace GenerativeNpc.World.Agent
         {
             locationRegistry = FindObjectOfType<LocationRegistry>();
             simulationClock = FindObjectOfType<SimulationClock>();
+            actionEffectResolver = FindObjectOfType<WorldObjectActionEffectResolver>();
 
             agentMover = GetComponent<AgentMover>();    
         }
@@ -150,9 +152,27 @@ namespace GenerativeNpc.World.Agent
                 yield break;
             }
 
+            if (actionEffectResolver == null)
+            {
+                Debug.LogWarning("WorldObjectActionEffectResolver is not assigned.");
+                yield break;
+            }
+
             Debug.Log($"Use object: {action.targetId}");
 
-            yield return new WaitForSeconds(1f);
+            if (action.durationMinutes > 0)
+            {
+                yield return new WaitForSeconds(action.durationMinutes);
+            }
+
+            if (actionEffectResolver.TryApplyUseObject(action, out var effectDescription))
+            {
+                Debug.Log($"[World Effect Applied] {effectDescription}");
+            }
+            else
+            {
+                Debug.Log($"[World Effect Skipped] {effectDescription}");
+            }
         }
 
         #endregion

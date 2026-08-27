@@ -206,7 +206,6 @@ namespace GenerativeNpc.World.Agent
             }
 
             var observation = observationBuilder.BuildObservation();
-            Debug.Log(observation);
 
             DecisionResponseDto response = null;
             string error = null;

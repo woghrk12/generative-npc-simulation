@@ -22,8 +22,16 @@ namespace GenerativeNpc.World.Object
         public string DisplayName => displayName;
         public string LocationId => locationId;
         public bool IsObservable => isObservable;
-        public string StateText => objectState != null ? objectState.StateText : "unknown";
+        public string StateText 
+        {
+            set 
+            {
+                if (objectState == null) return;
 
+                objectState.StateText = value;
+            }
+            get => objectState != null ? objectState.StateText : "unknown";
+        }
         #endregion
 
         #region Methods
