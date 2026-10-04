@@ -12,6 +12,7 @@ public sealed record DecisionResponse(
     int MemoryCount,
     string MemoryMessage,
     string DecisionQuery,
+    string DecisionPrompt,
     AgentActionResponse Action,
     int RetrievedMemoryCount,
     IReadOnlyList<RetrievedMemoryResponse> RetrievedMemories

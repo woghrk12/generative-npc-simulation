@@ -2,6 +2,7 @@ using System.Text;
 using AgentServer.Contracts.Observations;
 using AgentServer.Models.Decisions;
 using AgentServer.Models.Memories;
+using AgentServer.Services.Agents;
 using AgentServer.Services.Memories;
 
 namespace AgentServer.Services.Decisions;
@@ -11,10 +12,14 @@ public sealed class RuleBasedDecisionService : IDecisionService
     private const int DEFAULT_MEMORY_TOP_K = 5;
 
     private readonly IMemoryRetrievalService memoryRetrievalService;
+    private readonly IAgentProflieService agentProfileService;
+    private readonly IDecisionPromptBuilder decisionPromptBuilder;
 
-    public RuleBasedDecisionService(IMemoryRetrievalService memoryRetrievalService)
+    public RuleBasedDecisionService(IMemoryRetrievalService memoryRetrievalService, IAgentProflieService agentProfileService, IDecisionPromptBuilder decisionPromptBuilder)
     {
         this.memoryRetrievalService = memoryRetrievalService;
+        this.agentProfileService = agentProfileService;
+        this.decisionPromptBuilder = decisionPromptBuilder;
     }
 
     public AgentDecisionResult Decide(AgentObservationRequest observation, int memoryTopK)
@@ -24,9 +29,11 @@ public sealed class RuleBasedDecisionService : IDecisionService
         var normalizedTopK = memoryTopK > 0 ? memoryTopK : DEFAULT_MEMORY_TOP_K;
         var decisionQuery = BuildDecisionQuery(observation);
         var retrievedMemories = memoryRetrievalService.Retrieve(observation.AgentId, decisionQuery, normalizedTopK);
+        var profile = agentProfileService.GetByAgentId(observation.AgentId);
+        var decisionPrompt = decisionPromptBuilder.Build(profile, observation, retrievedMemories);
         var action = DecideAction(observation, retrievedMemories);
 
-        return new AgentDecisionResult(DecisionQuery: decisionQuery, Action: action, RetrievedMemories: retrievedMemories);
+        return new AgentDecisionResult(DecisionQuery: decisionQuery, DecisionPrompt: decisionPrompt, Action: action, RetrievedMemories: retrievedMemories);
     }
 
     private static string BuildDecisionQuery(AgentObservationRequest observation)

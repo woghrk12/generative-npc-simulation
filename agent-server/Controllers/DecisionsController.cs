@@ -51,6 +51,7 @@ public sealed class DecisionsController : ControllerBase
             MemoryCount: memoryResult.MemoryCount,
             MemoryMessage: memoryResult.Reason,
             DecisionQuery: decisionResult.DecisionQuery,
+            DecisionPrompt: decisionResult.DecisionPrompt,
             Action: ToActionResponse(decisionResult.Action),
             RetrievedMemoryCount: decisionResult.RetrievedMemories.Count,
             RetrievedMemories: decisionResult.RetrievedMemories.Select(ToRetrievedMemoryResponse).ToArray()
